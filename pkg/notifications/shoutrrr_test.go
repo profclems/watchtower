@@ -49,6 +49,7 @@ func mockDataFromStates(states ...s.State) Data {
 	return Data{
 		Entries: legacyMockData.Entries,
 		Report:  mocks.CreateMockProgressReport(states...),
+		Title:   "Updates on Mock",
 	}
 }
 
@@ -175,6 +176,14 @@ var _ = Describe("Shoutrrr", func() {
 
 		})
 
+		When("using a template referencing Title", func() {
+			It("should contain the title in the output", func() {
+				expected := `Updates on Mock`
+				data := mockDataFromStates(s.UpdatedState)
+				Expect(getTemplatedResult(`{{ .Title }}`, false, data)).To(Equal(expected))
+			})
+		})
+
 		Describe("the default template", func() {
 			When("all containers are fresh", func() {
 				It("should return an empty string", func() {
@@ -276,6 +285,7 @@ func sendNotificationsWithBlockingRouter(legacy bool) (*shoutrrrTypeNotifier, *b
 		done:           make(chan bool),
 		Router:         router,
 		legacyTemplate: legacy,
+		params:         &types.Params{},
 	}
 
 	entry := &logrus.Entry{

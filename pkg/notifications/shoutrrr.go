@@ -145,7 +145,8 @@ func (n *shoutrrrTypeNotifier) buildMessage(data Data) (string, error) {
 }
 
 func (n *shoutrrrTypeNotifier) sendEntries(entries []*log.Entry, report t.Report) {
-	msg, err := n.buildMessage(Data{entries, report})
+	title, _ := n.params.Title()
+	msg, err := n.buildMessage(Data{entries, report, title})
 
 	if msg == "" {
 		// Log in go func in case we entered from Fire to avoid stalling
@@ -238,4 +239,5 @@ func getShoutrrrTemplate(tplString string, legacy bool) (tpl *template.Template,
 type Data struct {
 	Entries []*log.Entry
 	Report  t.Report
+	Title   string
 }
